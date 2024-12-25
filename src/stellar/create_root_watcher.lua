@@ -29,11 +29,11 @@ stellar.create_root_watcher = function(output_file)
         return trace
     end
     selfobj.create_function = function(name, callback)
-        return function(args)
+        return function(...)
             selfobj.trace[#selfobj.trace + 1] = name
             selfobj.stream("trace change:")
             selfobj.stream(selfobj.get_trace_path() .. "\n")
-            local result = callback(args)
+            local result = callback(...)
             selfobj.trace[#selfobj.trace] = nil
             selfobj.stream("trace change:")
             selfobj.stream(selfobj.get_trace_path() .. "\n")
