@@ -20,7 +20,7 @@ stellar.create_root_watcher = function(output_file)
     end
     selfobj.get_trace_path = function()
         if #selfobj.trace == 0 then
-            return "global"
+            return "[global]"
         end
         local trace = ""
         for i = 1, #selfobj.trace do
@@ -39,6 +39,17 @@ stellar.create_root_watcher = function(output_file)
             selfobj.stream(selfobj.get_trace_path() .. "\n")
             return result
         end
+    end
+
+    selfobj.plotage_point = function(name, callback)
+        local current_trace = selfobj.get_trace_path()
+        local point_trace = current_trace .. "[" .. name .. "]"
+        selfobj.stream("plotage point:" .. point_trace .. "\n")
+        callback()
+    end
+
+    selfobj.plot_var = function(name, value)
+        private_steallar_functions.plot_var(name, value, selfobj.stream)
     end
     return selfobj
 end
