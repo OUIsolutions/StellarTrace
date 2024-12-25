@@ -1,6 +1,9 @@
 # Compiled Lua sources
 luac.out
 darwin*
+debug.txt
+teste.lua
+stellar.lua
 # luarocks build files
 *.src.rock
 *.zip
