@@ -1,7 +1,7 @@
-stellar                  = require("stellar")
-
-watcher                  = stellar.create_root_watcher("debug.txt")
-watcher.unplot_functions = { "is_str_at_point" }
+stellar = require("stellar")
+--stellar.debug = true
+watcher = stellar.create_root_watcher("debug.txt")
+--watcher.debug() -- this is require to allow all functions
 
 
 is_str_at_point = watcher.create_function("is_str_at_point", function(str, i, testcase)
@@ -17,7 +17,7 @@ is_str_at_point = watcher.create_function("is_str_at_point", function(str, i, te
     return is_at_point
 end)
 
-remove_coments = watcher.create_function("remove_coments", function(code)
+remove_coments  = watcher.create_function("remove_coments", function(code)
     watcher.plotage_point("args", function()
         watcher.plot_var("code", code)
     end)
@@ -32,8 +32,8 @@ remove_coments = watcher.create_function("remove_coments", function(code)
 
         if not inside_coment then
             watcher.plotage_point("line 34")
-            local is_a_comment_start = is_str_at_point(code, i, "--")
-            if is_a_comment_start then
+            if is_str_at_point(code, i, "--") then
+                watcher.plotage_point("line 36")
                 inside_coment = true
                 goto continue
             end
@@ -43,8 +43,8 @@ remove_coments = watcher.create_function("remove_coments", function(code)
 
         if inside_coment then
             watcher.plotage_point("line 45")
-            local is_comment_end = is_str_at_point(code, i, "\n")
-            if is_comment_end then
+            if is_str_at_point(code, i, "\n") then
+                watcher.plotage_point("line 47")
                 inside_coment = false
                 goto continue
             end

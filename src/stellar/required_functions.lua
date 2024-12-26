@@ -1,5 +1,9 @@
 stellar.required_functions.error = error
 stellar.required_functions.type = type
+if string then
+    stellar.required_functions.format = string.format
+end
+
 if table then
     stellar.required_functions.concat = table.concat
 end

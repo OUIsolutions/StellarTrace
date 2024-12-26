@@ -1,17 +1,27 @@
 stellar.create_root_watcher = function(output_file)
-    local selfobj = {}
-    selfobj.trace = {}
-    selfobj.point = 0
-    selfobj.min_plotage = 1
-    selfobj.max_plotage = -1
+    local selfobj            = {}
+    selfobj.trace            = {}
+    selfobj.point            = 0
+    selfobj.min_plotage      = 1
+    selfobj.max_plotage      = -1
     selfobj.unplot_functions = {}
+    selfobj.unplot_points    = {}
+    selfobj.file             = nil
+    selfobj.is_debug         = false
+    local file               = nil
 
 
-    local file = stellar.required_functions.open(output_file, "w")
-    if not file then
-        stellar.required_functions.error("impossible to open the file " .. output_file)
+    local function stream(data)
+        print("chamou")
+        if not selfobj.file then
+            selfobj.file = stellar.required_functions.open(output_file, "a+")
+        end
+        if not selfobj.file then
+            stellar.required_functions.error("impossible to open the file " .. output_file)
+            return
+        end
+        selfobj.file:write(data)
     end
-    file = stellar.required_functions.open(output_file, "a+")
 
     local function plot_point()
         if selfobj.point < selfobj.min_plotage then
@@ -23,20 +33,15 @@ stellar.create_root_watcher = function(output_file)
         if private_steallar_functions.is_inside(selfobj.unplot_functions, selfobj.func_name) then
             return false
         end
+        for i = 1, #selfobj.unplot_points do
+            local current = selfobj.unplot_points[i]
+
+            if current.func_name == selfobj.func_name and current.plot_name == selfobj.plot_name then
+                return false
+            end
+        end
         return true
     end
-
-    local function stream(data)
-        if not file then
-            file = stellar.required_functions.open(output_file, "a+")
-        end
-        if not file then
-            stellar.required_functions.error("impossible to open the file " .. output_file)
-            return
-        end
-        file:write(data)
-    end
-
 
     local function get_trace_path()
         if #selfobj.trace == 0 then
@@ -49,9 +54,20 @@ stellar.create_root_watcher = function(output_file)
         return trace
     end
 
+    selfobj.debug = function()
+        selfobj.is_debug = true
+        selfobj.file = stellar.required_functions.open(output_file, "w")
+        if not selfobj.file then
+            stellar.required_functions.error("impossible to open the file " .. output_file)
+        end
+        selfobj.file = stellar.required_functions.open(output_file, "a+")
+    end
 
     selfobj.create_function = function(name, callback)
         return function(...)
+            if not selfobj.is_debug then
+                return callback(...)
+            end
             selfobj.point = selfobj.point + 1
             selfobj.trace[#selfobj.trace + 1] = name
             local old_func_name = selfobj.func_name
@@ -77,6 +93,9 @@ stellar.create_root_watcher = function(output_file)
     end
 
     selfobj.plotage_point = function(name, callback)
+        if not selfobj.is_debug then
+            return
+        end
         selfobj.point = selfobj.point + 1
         selfobj.plot_name = name
         selfobj.trace[#selfobj.trace + 1] = name
@@ -94,8 +113,27 @@ stellar.create_root_watcher = function(output_file)
         end
     end
 
+    selfobj.print_raw = function(data)
+        if not selfobj.is_debug then
+            return
+        end
+        stream(data)
+    end
+
+    selfobj.print_format = function(...)
+        if not selfobj.is_debug then
+            return
+        end
+        local result = stellar.required_functions.format(...)
+        stream(result)
+    end
+
     selfobj.plot_var = function(name, value)
+        if not selfobj.is_debug then
+            return
+        end
         private_steallar_functions.plot_var(name, value, stream)
     end
+
     return selfobj
 end
