@@ -1,6 +1,8 @@
 stellar = require("stellar")
 
 watcher = stellar.create_root_watcher("debug.txt")
+watcher.debug()
+
 
 add = watcher.create_function("add", function(x, y)
     watcher.plotage_point("args", function()

@@ -12,7 +12,6 @@ stellar.create_root_watcher = function(output_file)
 
 
     local function stream(data)
-        print("chamou")
         if not selfobj.file then
             selfobj.file = stellar.required_functions.open(output_file, "a+")
         end
