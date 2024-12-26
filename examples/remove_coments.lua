@@ -1,7 +1,6 @@
 stellar = require("stellar")
---stellar.debug = true
 watcher = stellar.create_root_watcher("debug.txt")
---watcher.debug() -- this is require to allow all functions
+watcher.debug()
 
 
 is_str_at_point = watcher.create_function("is_str_at_point", function(str, i, testcase)
