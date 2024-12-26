@@ -1,14 +1,20 @@
 stellar.create_root_watcher = function(output_file)
     local selfobj = {}
     selfobj.trace = {}
-    local file = stellar.required_functions.open(output_file, "w")
+    selfobj.point = 1
+    selfobj.min_plotage = 1
+    selfobj.max_plotage = -1
 
+
+    local file = stellar.required_functions.open(output_file, "w")
     if not file then
         stellar.required_functions.error("impossible to open the file " .. output_file)
     end
     file = stellar.required_functions.open(output_file, "a+")
 
-    selfobj.stream = function(data)
+
+
+    local function stream(data)
         if not file then
             file = stellar.required_functions.open(output_file, "a+")
         end
@@ -18,7 +24,9 @@ stellar.create_root_watcher = function(output_file)
         end
         file:write(data)
     end
-    selfobj.get_trace_path = function()
+
+
+    local function get_trace_path()
         if #selfobj.trace == 0 then
             return "[global]"
         end
@@ -28,28 +36,37 @@ stellar.create_root_watcher = function(output_file)
         end
         return trace
     end
+
+
     selfobj.create_function = function(name, callback)
         return function(...)
+            selfobj.point = selfobj.point + 1
+            stream("point: " .. selfobj.point .. " ")
             selfobj.trace[#selfobj.trace + 1] = name
-            selfobj.stream("trace change:")
-            selfobj.stream(selfobj.get_trace_path() .. "\n")
+            stream("trace change:")
+            stream(get_trace_path() .. "\n")
             local result = callback(...)
             selfobj.trace[#selfobj.trace] = nil
-            selfobj.stream("trace change:")
-            selfobj.stream(selfobj.get_trace_path() .. "\n")
+            stream("trace change:")
+            stream(get_trace_path() .. "\n")
+            stream("\n")
             return result
         end
     end
 
     selfobj.plotage_point = function(name, callback)
-        local current_trace = selfobj.get_trace_path()
-        local point_trace = current_trace .. "[" .. name .. "]"
-        selfobj.stream("plotage point:" .. point_trace .. "\n")
+        selfobj.point = selfobj.point + 1
+        stream("point: " .. selfobj.point .. " ")
+        selfobj.trace[#selfobj.trace + 1] = name
+        stream("plotage point:")
+        stream(get_trace_path() .. "\n")
+        selfobj.trace[#selfobj.trace] = nil
         callback()
+        stream("\n")
     end
 
     selfobj.plot_var = function(name, value)
-        private_steallar_functions.plot_var(name, value, selfobj.stream)
+        private_steallar_functions.plot_var(name, value, stream)
     end
     return selfobj
 end
