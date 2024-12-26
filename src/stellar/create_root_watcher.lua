@@ -88,8 +88,10 @@ stellar.create_root_watcher = function(output_file)
         stream("plotage point:")
         stream(get_trace_path() .. "\n")
         selfobj.trace[#selfobj.trace] = nil
-        callback()
-        stream("\n")
+        if callback then
+            callback()
+            stream("\n")
+        end
     end
 
     selfobj.plot_var = function(name, value)
