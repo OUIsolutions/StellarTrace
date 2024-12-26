@@ -1,6 +1,19 @@
 stellar = require("stellar")
 
 watcher = stellar.create_root_watcher("debug.txt")
+watcher.unplot_functions = { "is_str_at_point" }
+is_str_at_point = watcher.create_function("is_str_at_point", function(str, i, testcase)
+    local possible_start = string.sub(str, i, i + #testcase - 1)
+    local is_at_point = possible_start == testcase
+    watcher.plotage_point("str_at_point_result", function()
+        watcher.plot_var("i", i)
+        watcher.plot_var("testcase", testcase)
+
+        watcher.plot_var("possible start", possible_start)
+        watcher.plot_var("is_at_point", is_at_point)
+    end)
+    return is_at_point
+end)
 
 remove_coments = watcher.create_function("remove_coments", function(code)
     watcher.plotage_point("args", function()
@@ -16,14 +29,7 @@ remove_coments = watcher.create_function("remove_coments", function(code)
         end)
 
         if not inside_coment then
-            local possible_start = string.sub(code, i, i + #"--" - 1)
-            local is_a_start_comment = possible_start == "--"
-            watcher.plotage_point("outside omment", function()
-                watcher.plot_var("possible_start", possible_start)
-                watcher.plot_var("is_a_start_comment", is_a_start_comment)
-            end)
-
-            if is_a_start_comment then
+            if is_str_at_point(code, i, "--") then
                 inside_coment = true
                 goto continue
             else
@@ -32,16 +38,7 @@ remove_coments = watcher.create_function("remove_coments", function(code)
         end
 
         if inside_coment then
-            local possible_end = string.sub(code, i, i)
-            local is_end_coment = possible_end == '\n'
-
-            watcher.plotage_point("inside comment", function()
-                watcher.plot_var("possible_end", possible_end)
-                watcher.plot_var("is_end_coment", is_end_coment)
-            end)
-
-
-            if is_end_coment then
+            if is_str_at_point(code, i, "\n") then
                 inside_coment = false
                 goto continue
             end
