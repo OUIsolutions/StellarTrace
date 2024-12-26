@@ -2,6 +2,13 @@
 A lua Lib to generate observability by allowing to view each var and functions
 trace of algorithics
 
+## Installing
+StellarTrace its a single file lib, for usage just download the [Amalgamation](https://github.com/OUIsolutions/StellarTrace/releases/download/0.001/stellar.lua)
+and import with
+```lua
+stellar = require("stellar")
+```
+
 ## Basic
 
 these shows a basic trace into 2 functions (main,add)
@@ -47,6 +54,51 @@ point: 4 plotage point:[main][result]
 
 trace change:[global]
 
+```
+Its also possible to plot tables into the coide
+```lua
+stellar = require("stellar")
+watcher = stellar.create_root_watcher("debug.txt")
+watcher.debug()
+main = watcher.create_function("main", function(x)
+    local test_table = {}
+    for i = 1, 5 do
+        test_table[#test_table + 1] = i * 10
+        watcher.plotage_point("iterator", function()
+            watcher.plot_var("test_table", test_table)
+        end)
+    end
+end)
+main()
+```
+it will output:
+```txt
+point: 1 trace change:[main]
+point: 2 plotage point:[main][iterator]
+test_table[1]:10
+
+point: 3 plotage point:[main][iterator]
+test_table[1]:10
+test_table[2]:20
+
+point: 4 plotage point:[main][iterator]
+test_table[1]:10
+test_table[2]:20
+test_table[3]:30
+
+point: 5 plotage point:[main][iterator]
+test_table[1]:10
+test_table[2]:20
+test_table[3]:30
+test_table[4]:40
+
+point: 6 plotage point:[main][iterator]
+test_table[1]:10
+test_table[2]:20
+test_table[3]:30
+test_table[4]:40
+test_table[5]:50
+trace change:[global]
 ```
 
 ## Api References
