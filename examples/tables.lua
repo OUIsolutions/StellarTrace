@@ -7,7 +7,7 @@ watcher.debug()
 main = watcher.create_function("main", function(x)
     local test_table = {}
     for i = 1, 5 do
-        test_table[#test_table + 1] = "a"
+        test_table[#test_table + 1] = i * 10
         watcher.plotage_point("iterator", function()
             watcher.plot_var("test_table", test_table)
         end)
