@@ -8,7 +8,12 @@ and import with
 ```lua
 stellar = require("stellar")
 ```
-
+## Building from scratch
+if you want to build from scracth, you will need to have [Darwin](https://github.com/OUIsolutions/Darwin) installed
+on your machine,on version **0.015** , than clone the repo, and run
+```shell
+./darwin.o build
+```
 ## Basic
 
 these shows a basic trace into 2 functions (main,add)
