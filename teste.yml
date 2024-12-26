@@ -1,5 +1,0 @@
-- plotage: a|b|c
-- "[a][b][c][a]": "aaa"
-- "[global][b][c][a]": 30
-- a: 30
-- plotage: [a, b]

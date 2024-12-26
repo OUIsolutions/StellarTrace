@@ -1,6 +1,6 @@
 # Compiled Lua sources
 luac.out
-darwin*
+darwin.c
 debug.txt
 teste.lua
 stellar.lua
